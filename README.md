@@ -1,9 +1,9 @@
-# Veri işleme ve dönüştürme için temel kütüphane
+# Core library for data processing and transformation
 pandas
 
-# EnergyZero API'sinden veri çekmek için
+# For fetching data from the EnergyZero API
 requests
 
-# Parquet formatında okuma/yazma için gerekli motorlar
+# Engines required for reading/writing in Parquet format
 pyarrow
 fastparquet
