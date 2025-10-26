@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: airflow_postgres
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airflow"]
+      interval: 5s
+      retries: 5
+
+  # Airflow Webserver (Log Okuma ve UI)
+  airflow-webserver:
+    image: apache/airflow:2.9.3
+    container_name: airflow_webserver
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - _PIP_ADDITIONAL_REQUIREMENTS=pandas requests pyarrow fastparquet **matplotlib seaborn** ```
+      - AIRFLOW__WEBSERVER__SECRET_KEY=mysecretkey123
+      - AIRFLOW__LOGGING__LOGGING_LEVEL=INFO
+      - AIRFLOW__LOGGING__EXECUTOR_SHOULD_REPLICATE_LOG_CONFIGURATION=False
+      # Webserver'a logları kendi servis adını kullanarak okumasını söylüyoruz (Gerekli değil ama iyi bir pratik)
+      - AIRFLOW__WEBSERVER__BASE_URL=http://airflow-webserver:8080
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./scripts:/opt/airflow/scripts
+      - ./data:/opt/airflow/data
+    ports:
+      - "8080:8080"
+    command: webserver
+
+  # Airflow Scheduler (LocalExecutor'da Görevleri Çalıştıran Ana Konteyner)
+  airflow-scheduler:
+    image: apache/airflow:2.9.3
+    container_name: airflow_scheduler
+    restart: always
+    depends_on:
+      - airflow-webserver
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__WEBSERVER__SECRET_KEY=mysecretkey123
+      - AIRFLOW__LOGGING__LOGGING_LEVEL=INFO
+      - AIRFLOW__LOGGING__EXECUTOR_SHOULD_REPLICATE_LOG_CONFIGURATION=False
+      - _PIP_ADDITIONAL_REQUIREMENTS=pandas requests pyarrow fastparquet **matplotlib seaborn** ```
+      
+      # KRİTİK LOG AYARLARI (403 Hatasını Çözmek İçin):
+      # 1. Uzaktan loglamayı kapattığımızdan emin ol (Local volume kullan)
+      - AIRFLOW__LOGGING__REMOTE_LOGGING=False
+      # 2. Airflow'a logların nerede olduğunu söylüyoruz (Volume yolu)
+      - AIRFLOW__LOGGING__REMOTE_BASE_LOG_FOLDER=/opt/airflow/logs
+      # 3. Webserver'a logları sunarken KENDİ ADINI kullanmasını söylüyoruz (Ağ İletişimini Düzeltir)
+      - AIRFLOW__LOGGING__LOG_SERVER_HOST=airflow-scheduler
+      
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./scripts:/opt/airflow/scripts
+      - ./data:/opt/airflow/data
+    command: scheduler
+
+  # Airflow Init Servisi
+  airflow-init:
+    image: apache/airflow:2.9.3
+    container_name: airflow_init
+    depends_on:
+      - postgres
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__WEBSERVER__SECRET_KEY=mysecretkey123
+      - _PIP_ADDITIONAL_REQUIREMENTS=pandas requests pyarrow fastparquet **matplotlib seaborn** ```
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./scripts:/opt/airflow/scripts
+      - ./data:/opt/airflow/data
+    command: bash -c "airflow db migrate && airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com"

@@ -1,0 +1,22 @@
+[2025-10-25T13:05:12.286+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-25T13:05:12.342+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: test_logging_dag.check_log_output manual__2025-10-25T13:05:10.678133+00:00 [queued]>
+[2025-10-25T13:05:12.351+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: test_logging_dag.check_log_output manual__2025-10-25T13:05:10.678133+00:00 [queued]>
+[2025-10-25T13:05:12.352+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-10-25T13:05:12.370+0000] {taskinstance.py:2330} INFO - Executing <Task(_PythonDecoratedOperator): check_log_output> on 2025-10-25 13:05:10.678133+00:00
+[2025-10-25T13:05:12.381+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:62 DeprecationWarning: This process (pid=194) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-10-25T13:05:12.383+0000] {standard_task_runner.py:64} INFO - Started process 195 to run task
+[2025-10-25T13:05:12.381+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'test_logging_dag', 'check_log_output', 'manual__2025-10-25T13:05:10.678133+00:00', '--job-id', '123', '--raw', '--subdir', 'DAGS_FOLDER/test_logging_dag.py', '--cfg-path', '/tmp/tmp2mneoq1u']
+[2025-10-25T13:05:12.384+0000] {standard_task_runner.py:91} INFO - Job 123: Subtask check_log_output
+[2025-10-25T13:05:12.431+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/settings.py:195 DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+[2025-10-25T13:05:12.507+0000] {task_command.py:426} INFO - Running <TaskInstance: test_logging_dag.check_log_output manual__2025-10-25T13:05:10.678133+00:00 [running]> on host 10299a595b6c
+[2025-10-25T13:05:12.658+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='test_logging_dag' AIRFLOW_CTX_TASK_ID='check_log_output' AIRFLOW_CTX_EXECUTION_DATE='2025-10-25T13:05:10.678133+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-25T13:05:10.678133+00:00'
+[2025-10-25T13:05:12.659+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-25T13:05:12.660+0000] {logging_mixin.py:188} INFO - >>> [PRINT] Bu bir Python print() çıktısıdır. Loglarda görünmeli.
+[2025-10-25T13:05:12.661+0000] {test_logging_dag.py:26} INFO - >>> [INFO] Bu, logger.info() ile üretilmiş bir mesajdır.
+[2025-10-25T13:05:12.661+0000] {test_logging_dag.py:29} WARNING - >>> [WARNING] Bu, logger.warning() ile üretilmiş bir mesajdır.
+[2025-10-25T13:05:12.661+0000] {python.py:237} INFO - Done. Returned value was: Loglama testi tamamlandı
+[2025-10-25T13:05:12.662+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-25T13:05:12.718+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=test_logging_dag, task_id=check_log_output, run_id=manual__2025-10-25T13:05:10.678133+00:00, execution_date=20251025T130510, start_date=20251025T130512, end_date=20251025T130512
+[2025-10-25T13:05:12.759+0000] {local_task_job_runner.py:243} INFO - Task exited with return code 0
+[2025-10-25T13:05:12.791+0000] {taskinstance.py:3503} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-10-25T13:05:12.803+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
